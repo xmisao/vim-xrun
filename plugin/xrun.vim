@@ -25,7 +25,7 @@ function! s:CreateOrReuseBuffer(name)
   return l:buf
 endfunction
 
-function! s:GetSelectedText2(start, end, mode)
+function! s:GetSelectedText(start, end, mode)
   let [line_start, column_start] = getpos("'<")[1:2]
   let [line_end, column_end] = getpos("'>")[1:2]
 
@@ -36,6 +36,8 @@ function! s:GetSelectedText2(start, end, mode)
     if a:mode ==# 'v'
       let lines[-1] = lines[-1][: column_end - (&selection == 'inclusive' ? 1 : 2)]
       let lines[0] = lines[0][column_start - 1:]
+    elseif  a:mode == "V"
+      " Nothing to do
     elseif  a:mode == "\<c-v>"
       let new_lines = []
       let i = 0
@@ -63,7 +65,7 @@ function! s:JobExit(bufnr, temp_file, job, status)
 endfunction
 
 function! s:Xrun(start, end, cmd) range
-  let selected_text = s:GetSelectedText2(a:start, a:end, visualmode())
+  let selected_text = s:GetSelectedText(a:start, a:end, visualmode())
 
   let temp_file = tempname()
   call writefile(split(selected_text, "\n", 1), temp_file)
